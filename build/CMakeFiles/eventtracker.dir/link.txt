@@ -1,0 +1,2 @@
+/sbin/ar qc libeventtracker.a CMakeFiles/eventtracker.dir/src/event.cpp.o CMakeFiles/eventtracker.dir/src/complex_value.cpp.o CMakeFiles/eventtracker.dir/src/serializer.cpp.o CMakeFiles/eventtracker.dir/src/database.cpp.o CMakeFiles/eventtracker.dir/src/event_builder.cpp.o
+/sbin/ranlib libeventtracker.a

@@ -1,0 +1,7 @@
+/usr/local/lib/libeventtracker.a
+/usr/local/include/complex_value.hpp
+/usr/local/include/database.hpp
+/usr/local/include/event.hpp
+/usr/local/include/serializable.hpp
+/usr/local/include/event_builder.hpp
+/usr/local/include/serializer.hpp

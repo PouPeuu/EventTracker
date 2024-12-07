@@ -1,0 +1,2 @@
+/sbin/ar qc libevent_tracker.a CMakeFiles/event_tracker.dir/src/main.cpp.o
+/sbin/ranlib libevent_tracker.a
