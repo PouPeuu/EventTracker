@@ -124,14 +124,12 @@ namespace Serializer {
         if constexpr(is_arithmetic_v<T>){
             T result;
             in.read(reinterpret_cast<char*>(&result), sizeof(T));
-            cout << "Deserialize: " << to_string(result) << endl;
             return result;
         } else if constexpr(is_same_v<T, string>) {
             size_t size;
             in.read(reinterpret_cast<char*>(&size), sizeof(size));
             char str[size+1]{};
             in.read(str, size);
-            cout << "Deserialize: \"" << str << "\"\n";
             return string(str);
         } else {
             throw bad_typeid();

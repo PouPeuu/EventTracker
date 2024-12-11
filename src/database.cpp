@@ -23,10 +23,8 @@ EventTracker::Database::Database(ifstream &in) {
 
     size_t n_events = Serializer::deserialize<size_t>(in);
     for (size_t i = 0; i < n_events; i++) {
-        cout << "Database deserializing event #" << std::to_string(i) << endl;
         Event event(in);
         this->add_event(event);
-        cout << "Database finished deserializing event #" << std::to_string(i) << endl;
     }
 }
 

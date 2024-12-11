@@ -99,7 +99,7 @@ EventTracker::Event::Event(ifstream &in) {
 	for (size_t i = 0; i < n_values; i++) {
 		string key = Serializer::deserialize<string>(in);
 
-		// FIXME
+		// do reconsider
 		try {
 			visit([this, key](auto&& v) {
 				this->values[key] = v;
