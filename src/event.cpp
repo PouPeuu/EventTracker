@@ -5,7 +5,10 @@
 
 using namespace EventTracker;
 
-using ValueType = variant<double, string, EventTracker::ComplexValue>;
+Event::Event(string name, time_t timestamp) {
+	this->name = name;
+	this->timestamp = timestamp;
+}
 
 Event::Event(string name, time_t timestamp, unordered_map<string, ValueType> values, unordered_set<string> flags) {
 	this->name = name;
@@ -35,7 +38,7 @@ string Event::to_string() const {
 		values_str += "[" + key + "] = ";
 		visit([&values_str](auto&& v) {
 			using T = decay_t<decltype(v)>;
-			if constexpr (is_same_v<T, double>) {
+			if constexpr (is_arithmetic_v<T>) {
 				values_str += std::to_string(v);
 			} else if constexpr (is_same_v<T, string>) {
 				values_str += v;
@@ -71,48 +74,39 @@ string Event::to_string() const {
 
 void EventTracker::Event::serialize(ofstream &out) const {
 	Serializer::serialize(out, this->name);
-	Serializer::serialize(out, (long)this->timestamp);
+	Serializer::serialize(out, this->timestamp);
 
 	Serializer::serialize_sequence(out, this->flags);
 
-	Serializer::serialize(out, (int) this->values.size());
+	Serializer::serialize(out, this->values.size());
 	for (const auto& [key, value] : this->values) {
 		Serializer::serialize(out, key);
 
-		if (holds_alternative<EventTracker::ComplexValue>(value)) {
-			Serializer::serialize(out, &get<EventTracker::ComplexValue>(value));
-		} else if (holds_alternative<double>(value)) {
-			Serializer::serialize(out, get<double>(value));
-		} else if (holds_alternative<string>(value)) {
-			Serializer::serialize(out, get<string>(value));
-		}
+		Serializer::serialize_variant(out, value);
 	}
 }
 
 EventTracker::Event::Event(ifstream &in) {
-	this->name = get<string>(Serializer::deserialize(in));
-	this->timestamp = get<long>(Serializer::deserialize(in));
+	this->name = Serializer::deserialize<string>(in);
+	this->timestamp = Serializer::deserialize<time_t>(in);
 
-	unsigned int flags_size = get<int>(Serializer::deserialize(in));
-
-	for (unsigned int i = 0; i < flags_size; i++) {
-		this->flags.insert(get<string>(Serializer::deserialize(in)));
+	size_t n_flags = Serializer::deserialize<size_t>(in);
+	for (size_t i = 0; i < n_flags; i++) {
+		this->flags.insert(Serializer::deserialize<string>(in));
 	}
 
-	unsigned int values_size = get<int>(Serializer::deserialize(in));
+	size_t n_values = Serializer::deserialize<size_t>(in);
+	for (size_t i = 0; i < n_values; i++) {
+		string key = Serializer::deserialize<string>(in);
 
-	for (unsigned int i = 0; i < values_size; i++) {
-		string key = get<string>(Serializer::deserialize(in));
-
+		// FIXME
 		try {
-			auto value = Serializer::deserialize(in);
-			if (holds_alternative<double>(value)) {
-				this->values[key] = get<double>(value);
-			} else if (holds_alternative<string>(value)) {
-				this->values[key] = get<string>(value);
-			}
-		} catch (const invalid_argument& e) {
-			this->values[key] = ComplexValue(in);
+			visit([this, key](auto&& v) {
+				this->values[key] = v;
+			}, Serializer::deserialize_variant(in));
+		} catch (bad_typeid e) {
+			ComplexValue complex_value(in);
+			this->values[key] = complex_value;
 		}
 	}
 }

@@ -13,7 +13,7 @@
 #include <string>
 
 using namespace std;
-using ValueType = variant<double, string, EventTracker::ComplexValue>;
+using ValueType = variant<char, unsigned char, short, unsigned short, int, float, double, long, long long, unsigned int, unsigned long, unsigned long long, string, EventTracker::ComplexValue>;
 namespace fs = filesystem;
 
 namespace EventTracker {
@@ -24,6 +24,7 @@ namespace EventTracker {
 		unordered_map<string, ValueType> values;
 		unordered_set<string> flags;
 	public:
+		Event(string name, time_t timestamp);
 		Event(string name, time_t timestamp, unordered_map<string, ValueType> values, unordered_set<string> flags);
 		Event(ifstream &in);
 

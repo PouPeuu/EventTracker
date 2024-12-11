@@ -12,7 +12,7 @@ using namespace std;
 
 namespace EventTracker {
     class ComplexValue : public Serializable {
-        using ValueType = variant<double, string, EventTracker::ComplexValue>;
+        using ValueType = variant<char, unsigned char, short, unsigned short, int, float, double, long, long long, unsigned int, unsigned long, unsigned long long, string, EventTracker::ComplexValue>;
         private:
             unordered_map<string, ValueType> values;
             unordered_set<string> flags;
