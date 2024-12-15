@@ -17,6 +17,7 @@ namespace EventTracker {
 
         vector<ValueType> predefined_values;
     public:
+        Database() = default;
         Database(string name, time_t creation_timestamp);
         Database(ifstream &in);
 
